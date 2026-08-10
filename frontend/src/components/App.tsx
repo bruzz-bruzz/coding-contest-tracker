@@ -1,6 +1,7 @@
 import './App.css'
 import Github from './Github'
 import Toast from './Toast'
+import NewTabSVG from '../assets/NewTab.svg'
 import CodeChefSVG from '../assets/CodeChef.svg'
 import AtCoderSVG from '../assets/AtCoder.svg'
 import LeetCodeSVG from '../assets/LeetCode.svg'
@@ -11,6 +12,7 @@ import axios from 'axios'
 export default function App(){
   type platforms = 'All'|'Codeforces'|'CodeChef'|'AtCoder'|'LeetCode'
   const [cookies,setCookies] = useCookies()
+  const [currTime,setCurrTime] = useState(Date.now())
   const [filterPlatform,setFilterPlatform] = useState<platforms>("All")
   const [contests,setContests] = useState<any | null>({
   "AtCoder": [
@@ -147,6 +149,22 @@ export default function App(){
       setToast({msg:"",ok:false})
     },3000)
   }
+  function timeUntilStart(contestStart:number,contestEnd:number){
+    if(currTime > (contestStart + contestEnd)){
+      return "Ended."
+    }
+    const s = Math.floor((contestStart - currTime) / 1000)
+    if(s < 0){
+      return "Started"
+    }
+    const second = s % 60
+    const m = Math.floor(s / 60) % 60
+    const h = Math.floor(s / 3600) % 24
+    const d = Math.floor(s / (3600 * 24))
+    console.log(d,h,m,second,s)
+    return `${d}d ${h}h ${m}m ${second} s`
+  }
+  function
   async function getContestData(){
     try{
       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/all`)
@@ -156,6 +174,12 @@ export default function App(){
     }
     clearToast()
   }
+  useEffect(()=>{
+    const interval = setInterval(()=>{
+      setCurrTime(Date.now())
+    },1000)
+    return () => clearInterval(interval)
+  },[])
   //add LINKS
     return (
       <div>
@@ -180,40 +204,44 @@ export default function App(){
                   <th>Contest Name</th>
                   <th>Starting Time</th>
                   <th>Contest Duration</th>
+                  <th>Time until start (DAY:MINUTE:SECOND)</th>
                 </tr>
               </thead>
               <tbody>
-                
                 {(filterPlatform === 'LeetCode' || filterPlatform === 'All') && contests['LeetCode']['data']['topTwoContests'].map((item:any,idx:any)=>(
                   <tr key={'LeetCode' + String(idx)}>
                     <td className='flex items-center'> <img className='w-10 h-10' src={LeetCodeSVG} />LeetCode</td>
-                    <td>{item.title}</td>
+                    <td>{item.title}<a href={''}><img src={NewTabSVG} /></a></td>
                     <td>{new Date(item.startTime * 1000).toISOString()}</td>
                     <td>{item.duration / 60} minutes</td>
+                    <td>{timeUntilStart((Date.parse(new Date(item.startTime * 1000).toISOString())),item.duration * 1000)}</td>
                   </tr>
                 ))}
                 {(filterPlatform === 'AtCoder' || filterPlatform === 'All') && contests['AtCoder'].map((item:any,idx:any)=>(
                   <tr key={'AtCoder' + String(idx)}>
                     <td className='flex items-center'> <img className='w-10 h-10' src={AtCoderSVG} />AtCoder</td>
-                    <td>{item.title}</td>
+                    <td>{item.title}<a href={''}><img src={NewTabSVG} /></a></td>
                     <td>{new Date(item.start_epoch_second * 1000).toISOString()}</td>
                     <td>{item.duration_second / 60} minutes</td>
+                    <td>{timeUntilStart((Date.parse(new Date(item.start_epoch_second * 1000).toISOString())),item.duration_second * 1000)}</td>
                   </tr>
                 ))}
                 {(filterPlatform === 'CodeChef' || filterPlatform === 'All') && contests['CodeChef'].map((item:any,idx:any)=>(
                   <tr key={'CodeChef' + String(idx)}>
                     <td className='flex items-center'><img className='w-10 h-10' src={CodeChefSVG}/>CodeChef </td>
-                    <td>{item.contest_name}</td>
+                    <td>{item.contest_name}<a href={''}><img src={NewTabSVG} /></a></td>
                     <td>{item.contest_start_date_iso}</td>
                     <td>{item.contest_duration} minutes</td>
+                    <td>{timeUntilStart(Date.parse(item.contest_start_date_iso),item.contest_duration * 60 * 1000)}</td>
                   </tr>
                 ))}
                 {(filterPlatform === 'Codeforces' || filterPlatform === 'All') && contests['Codeforces'].map((item:any,idx:any)=>(
                   <tr key={"Codeforces" + String(idx)}>
                     <td className='flex items-center'><img className='w-10 h-10' src={CodeforcesSVG}/>Codeforces</td>
-                    <td>{item.name}</td>
+                    <td>{item.name}<a href={''}><img src={NewTabSVG} /></a></td>
                     <td>{new Date(item.startTimeSeconds * 1000).toISOString()}</td>
                     <td>{item.durationSeconds / 60} minutes</td>
+                    <td>{timeUntilStart((Date.parse(new Date(item.startTimeSeconds * 1000).toISOString())),item.durationSeconds * 1000)}</td>
                   </tr>
                 ))}
               </tbody>
