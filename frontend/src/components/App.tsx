@@ -11,6 +11,12 @@ import {useCookies} from 'react-cookie'
 import axios from 'axios'
 export default function App(){
   type platforms = 'All'|'Codeforces'|'CodeChef'|'AtCoder'|'LeetCode'
+  const urlMap = {
+    'LeetCode':"https://leetcode.com/contest",
+    "AtCoder":"https://atcoder.jp/contests",
+    "CodeChef":"https://www.codechef.com",
+    "Codeforces":"https://codeforces.com/contest"
+  }
   const [cookies,setCookies] = useCookies()
   const [currTime,setCurrTime] = useState(Date.now())
   const [filterPlatform,setFilterPlatform] = useState<platforms>("All")
@@ -155,16 +161,46 @@ export default function App(){
     }
     const s = Math.floor((contestStart - currTime) / 1000)
     if(s < 0){
-      return "Started"
+      return "Started."
     }
     const second = s % 60
     const m = Math.floor(s / 60) % 60
     const h = Math.floor(s / 3600) % 24
     const d = Math.floor(s / (3600 * 24))
-    console.log(d,h,m,second,s)
-    return `${d}d ${h}h ${m}m ${second} s`
+    return `${d}d ${h}h ${m}m ${second}s`
   }
-  function
+  function createLink(type:'LeetCode'|"AtCoder"|"CodeChef"|"Codeforces",contestID:string,contestStart?:number,contestEnd?:number){
+    const baseURL = urlMap[type]
+    if(type === 'LeetCode'){
+      return `${baseURL}/${contestID}`
+    }else if(type === 'AtCoder'){
+      let numberID = contestID.split(' ')
+      if(numberID[numberID.length - 1].length !== 3){
+        numberID[numberID.length - 1] = numberID[numberID.length - 1].slice(0,3)
+      }
+      const type = contestID.match("Heuristic") || contestID.match("Beginner") || contestID.match("Regular") || contestID.match("Grand")
+      if(type === null){
+        return baseURL
+      } else if(type[0] === 'Heuristic'){
+        return `${baseURL}/ahc${numberID[numberID.length - 1]}`
+      } else if(type[0] === 'Beginner'){
+        return `${baseURL}/abc${numberID[numberID.length - 1]}`
+      } else if(type[0] === 'Regular'){
+        return `${baseURL}/arc${numberID[numberID.length - 1]}`
+      } else if(type[0] === "Grand"){
+        return `${baseURL}/agc${numberID[numberID.length - 1]}`
+      }
+    }
+    else if(type === 'CodeChef'){
+      return `${baseURL}/${contestID}`
+    } else if(type === 'Codeforces'){
+      const hasStartedOrEnded = timeUntilStart(contestStart as number,contestEnd as number)
+      if(hasStartedOrEnded !== 'Started.' && hasStartedOrEnded !== 'Ended.'){
+        return `${baseURL}s`
+      }
+      return `${baseURL}/${contestID}`
+    }
+  }
   async function getContestData(){
     try{
       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/all`)
@@ -211,7 +247,7 @@ export default function App(){
                 {(filterPlatform === 'LeetCode' || filterPlatform === 'All') && contests['LeetCode']['data']['topTwoContests'].map((item:any,idx:any)=>(
                   <tr key={'LeetCode' + String(idx)}>
                     <td className='flex items-center'> <img className='w-10 h-10' src={LeetCodeSVG} />LeetCode</td>
-                    <td>{item.title}<a href={''}><img src={NewTabSVG} /></a></td>
+                    <td>{item.title}<a target='_blank' href={createLink('LeetCode',item.titleSlug)}><img className='inline' src={NewTabSVG} /></a></td>
                     <td>{new Date(item.startTime * 1000).toISOString()}</td>
                     <td>{item.duration / 60} minutes</td>
                     <td>{timeUntilStart((Date.parse(new Date(item.startTime * 1000).toISOString())),item.duration * 1000)}</td>
@@ -220,7 +256,7 @@ export default function App(){
                 {(filterPlatform === 'AtCoder' || filterPlatform === 'All') && contests['AtCoder'].map((item:any,idx:any)=>(
                   <tr key={'AtCoder' + String(idx)}>
                     <td className='flex items-center'> <img className='w-10 h-10' src={AtCoderSVG} />AtCoder</td>
-                    <td>{item.title}<a href={''}><img src={NewTabSVG} /></a></td>
+                    <td>{item.title}<a target='_blank' href={createLink("AtCoder",item.title)}><img className='inline' src={NewTabSVG} /></a></td>
                     <td>{new Date(item.start_epoch_second * 1000).toISOString()}</td>
                     <td>{item.duration_second / 60} minutes</td>
                     <td>{timeUntilStart((Date.parse(new Date(item.start_epoch_second * 1000).toISOString())),item.duration_second * 1000)}</td>
@@ -229,7 +265,7 @@ export default function App(){
                 {(filterPlatform === 'CodeChef' || filterPlatform === 'All') && contests['CodeChef'].map((item:any,idx:any)=>(
                   <tr key={'CodeChef' + String(idx)}>
                     <td className='flex items-center'><img className='w-10 h-10' src={CodeChefSVG}/>CodeChef </td>
-                    <td>{item.contest_name}<a href={''}><img src={NewTabSVG} /></a></td>
+                    <td>{item.contest_name}<a target='_blank' href={createLink("CodeChef",item.contest_code)}><img className='inline' src={NewTabSVG} /></a></td>
                     <td>{item.contest_start_date_iso}</td>
                     <td>{item.contest_duration} minutes</td>
                     <td>{timeUntilStart(Date.parse(item.contest_start_date_iso),item.contest_duration * 60 * 1000)}</td>
@@ -238,7 +274,7 @@ export default function App(){
                 {(filterPlatform === 'Codeforces' || filterPlatform === 'All') && contests['Codeforces'].map((item:any,idx:any)=>(
                   <tr key={"Codeforces" + String(idx)}>
                     <td className='flex items-center'><img className='w-10 h-10' src={CodeforcesSVG}/>Codeforces</td>
-                    <td>{item.name}<a href={''}><img src={NewTabSVG} /></a></td>
+                    <td>{item.name}<a target='_blank' href={createLink('Codeforces',item.id,Date.parse(new Date(item.startTimeSeconds * 1000).toISOString()),item.durationSeconds * 1000)}><img className='inline' src={NewTabSVG} /></a></td>
                     <td>{new Date(item.startTimeSeconds * 1000).toISOString()}</td>
                     <td>{item.durationSeconds / 60} minutes</td>
                     <td>{timeUntilStart((Date.parse(new Date(item.startTimeSeconds * 1000).toISOString())),item.durationSeconds * 1000)}</td>
