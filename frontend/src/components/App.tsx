@@ -221,75 +221,174 @@ export default function App(){
     },1000)
     return () => clearInterval(interval)
   },[])
-    return (
-      <div>
-        <div className='flex justify-center items-center flex-col'>
-          <h3>Coding Contest Tracker</h3>
-          <h5>Refreshes twice a day at 00:00 and 12:00 Malaysian Time UTC +8</h5>
-          <div className='inline'>
-            <label>Selected platforms: </label>
-            <select value={filterPlatform} onChange={(e)=>setFilterPlatform(e.target.value as platforms)}>
-              <option value={"All"}>All</option>
-              <option value={"Codeforces"}>Codeforces</option>
-              <option value={"CodeChef"}>CodeChef</option>
-              <option value={"AtCoder"}>AtCoder</option>
-              <option value={"LeetCode"}>LeetCode</option>
-            </select>
+
+const platforms: platforms[] = ['All','Codeforces','CodeChef','AtCoder','LeetCode']
+
+return (
+  <div className='min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.12),_transparent_28%),linear-gradient(135deg,_#020617_0%,_#111827_100%)] px-4 py-8 text-slate-100 sm:px-6 lg:px-8'>
+    <div className='mx-auto flex max-w-7xl flex-col gap-6'>
+      <header className='overflow-hidden rounded-[28px] border border-white/10 bg-slate-900/75 shadow-2xl shadow-slate-950/40 backdrop-blur-xl'>
+        <div className='flex flex-col gap-8 px-6 py-8 lg:flex-row lg:items-end lg:justify-between lg:px-10'>
+          <div className='max-w-2xl space-y-4'>
+            <div className='inline-flex items-center rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-sm font-medium text-cyan-300'>
+              Live contest radar
+            </div>
+            <div className='space-y-3'>
+              <h1 className='text-4xl font-semibold tracking-tight text-white sm:text-5xl'>Coding Contest Tracker</h1>
+              <p className='text-lg leading-8 text-slate-300'>Stay one step ahead with upcoming contests from Codeforces, CodeChef, AtCoder, and LeetCode in one place.</p>
+            </div>
+            <p className='text-sm text-slate-400'>Refreshes twice a day at 00:00 and 12:00 Malaysian Time (UTC +8)</p>
           </div>
-          {contests !== null && (
-            <table>
-              <thead>
+
+          <div className='flex flex-wrap gap-2'>
+            {platforms.map((platform) => {
+              const active = filterPlatform === platform
+              return (
+                <button
+                  key={platform}
+                  type='button'
+                  onClick={() => setFilterPlatform(platform)}
+                  className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${active ? 'border-cyan-400 bg-cyan-400/20 text-cyan-200 shadow-lg shadow-cyan-500/10' : 'border-white/10 bg-white/5 text-slate-300 hover:border-cyan-400/40 hover:bg-white/10'}`}
+                >
+                  {platform}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </header>
+
+      <section className='grid gap-4 md:grid-cols-3'>
+        <div className='rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-lg shadow-slate-950/30 backdrop-blur'>
+          <p className='text-sm text-slate-400'>Current view</p>
+          <p className='mt-2 text-2xl font-semibold text-white'>{filterPlatform}</p>
+        </div>
+        <div className='rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-lg shadow-slate-950/30 backdrop-blur'>
+          <p className='text-sm text-slate-400'>Live data</p>
+          <p className='mt-2 text-2xl font-semibold text-white'>Updated every second</p>
+        </div>
+        <div className='rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-lg shadow-slate-950/30 backdrop-blur'>
+          <p className='text-sm text-slate-400'>Tracking ready</p>
+          <p className='mt-2 text-2xl font-semibold text-white'>Contest countdowns enabled</p>
+        </div>
+      </section>
+
+      <section className='overflow-hidden rounded-[28px] border border-white/10 bg-slate-900/75 shadow-2xl shadow-slate-950/40 backdrop-blur-xl'>
+        <div className='flex flex-col gap-3 border-b border-white/10 px-6 py-5 sm:flex-row sm:items-center sm:justify-between'>
+          <div>
+            <h2 className='text-xl font-semibold text-white'>Upcoming contests</h2>
+            <p className='mt-1 text-sm text-slate-400'>Tap a contest link to open the official page.</p>
+          </div>
+          <div className='rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-sm text-cyan-200'>
+            {contests !== null ? 'Live schedule' : 'Loading...'}
+          </div>
+        </div>
+
+        {contests !== null && (
+          <div className='overflow-x-auto'>
+            <table className='min-w-full divide-y divide-white/10 text-left text-sm text-slate-300'>
+              <thead className='bg-slate-800/70 text-xs uppercase tracking-[0.24em] text-slate-400'>
                 <tr>
-                  <th>Platform</th>
-                  <th>Contest Name</th>
-                  <th>Starting Time</th>
-                  <th>Contest Duration</th>
-                  <th>Time until start</th>
+                  <th className='px-6 py-4 font-medium'>Platform</th>
+                  <th className='px-6 py-4 font-medium'>Contest</th>
+                  <th className='px-6 py-4 font-medium'>Starting time</th>
+                  <th className='px-6 py-4 font-medium'>Duration</th>
+                  <th className='px-6 py-4 font-medium'>Time until start</th>
                 </tr>
               </thead>
-              <tbody>
-                {(filterPlatform === 'LeetCode' || filterPlatform === 'All') && contests['LeetCode']['data']['topTwoContests'].map((item:any,idx:any)=>(
-                  <tr key={'LeetCode' + String(idx)}>
-                    <td className='flex items-center'> <img className='w-10 h-10' src={LeetCodeSVG} />LeetCode</td>
-                    <td>{item.title}<a target='_blank' href={createLink('LeetCode',item.titleSlug)}><img className='inline' src={NewTabSVG} /></a></td>
-                    <td>{new Date(item.startTime * 1000).toLocaleString()}</td>
-                    <td>{minutesToHours(item.duration / 60)}</td>
-                    <td>{timeUntilStart((Date.parse(new Date(item.startTime * 1000).toISOString())),item.duration * 1000)}</td>
+              <tbody className='divide-y divide-white/10 bg-slate-900/40'>
+                {(filterPlatform === 'LeetCode' || filterPlatform === 'All') && contests['LeetCode']['data']['topTwoContests'].map((item:any, idx:any) => (
+                  <tr key={'LeetCode' + String(idx)} className='transition-colors hover:bg-white/5'>
+                    <td className='px-6 py-4'>
+                      <div className='flex items-center gap-3'>
+                        <img className='h-10 w-10 rounded-lg object-contain' src={LeetCodeSVG} alt='LeetCode logo' />
+                        <span className='font-medium text-white'>LeetCode</span>
+                      </div>
+                    </td>
+                    <td className='px-6 py-4'>
+                      <div className='flex items-center gap-2'>
+                        <span>{item.title}</span>
+                        <a className='rounded-full p-1 text-slate-400 transition hover:bg-white/10 hover:text-cyan-300' target='_blank' rel='noreferrer' href={createLink('LeetCode', item.titleSlug)}>
+                          <img className='h-4 w-4' src={NewTabSVG} alt='Open contest' />
+                        </a>
+                      </div>
+                    </td>
+                    <td className='px-6 py-4'>{new Date(item.startTime * 1000).toLocaleString()}</td>
+                    <td className='px-6 py-4'>{minutesToHours(item.duration / 60)}</td>
+                    <td className='px-6 py-4'>{timeUntilStart(Date.parse(new Date(item.startTime * 1000).toISOString()), item.duration * 1000)}</td>
                   </tr>
                 ))}
-                {(filterPlatform === 'AtCoder' || filterPlatform === 'All') && contests['AtCoder'].map((item:any,idx:any)=>(
-                  <tr key={'AtCoder' + String(idx)}>
-                    <td className='flex items-center'> <img className='w-10 h-10' src={AtCoderSVG} />AtCoder</td>
-                    <td>{item.title}<a target='_blank' href={createLink("AtCoder",item.title)}><img className='inline' src={NewTabSVG} /></a></td>
-                    <td>{new Date(item.start_epoch_second * 1000).toLocaleString()}</td>
-                    <td>{minutesToHours(item.duration_second / 60)}</td>
-                    <td>{timeUntilStart((Date.parse(new Date(item.start_epoch_second * 1000).toISOString())),item.duration_second * 1000)}</td>
+                {(filterPlatform === 'AtCoder' || filterPlatform === 'All') && contests['AtCoder'].map((item:any, idx:any) => (
+                  <tr key={'AtCoder' + String(idx)} className='transition-colors hover:bg-white/5'>
+                    <td className='px-6 py-4'>
+                      <div className='flex items-center gap-3'>
+                        <img className='h-10 w-10 rounded-lg object-contain' src={AtCoderSVG} alt='AtCoder logo' />
+                        <span className='font-medium text-white'>AtCoder</span>
+                      </div>
+                    </td>
+                    <td className='px-6 py-4'>
+                      <div className='flex items-center gap-2'>
+                        <span>{item.title}</span>
+                        <a className='rounded-full p-1 text-slate-400 transition hover:bg-white/10 hover:text-cyan-300' target='_blank' rel='noreferrer' href={createLink('AtCoder', item.title)}>
+                          <img className='h-4 w-4' src={NewTabSVG} alt='Open contest' />
+                        </a>
+                      </div>
+                    </td>
+                    <td className='px-6 py-4'>{new Date(item.start_epoch_second * 1000).toLocaleString()}</td>
+                    <td className='px-6 py-4'>{minutesToHours(item.duration_second / 60)}</td>
+                    <td className='px-6 py-4'>{timeUntilStart(Date.parse(new Date(item.start_epoch_second * 1000).toISOString()), item.duration_second * 1000)}</td>
                   </tr>
                 ))}
-                {(filterPlatform === 'CodeChef' || filterPlatform === 'All') && contests['CodeChef'].map((item:any,idx:any)=>(
-                  <tr key={'CodeChef' + String(idx)}>
-                    <td className='flex items-center'><img className='w-10 h-10' src={CodeChefSVG}/>CodeChef </td>
-                    <td>{item.contest_name}<a target='_blank' href={createLink("CodeChef",item.contest_code)}><img className='inline' src={NewTabSVG} /></a></td>
-                    <td>{new Date(Date.parse(item.contest_start_date_iso)).toLocaleString()}</td>
-                    <td>{minutesToHours(item.contest_duration)}</td>
-                    <td>{timeUntilStart(Date.parse(item.contest_start_date_iso),item.contest_duration * 60 * 1000)}</td>
+                {(filterPlatform === 'CodeChef' || filterPlatform === 'All') && contests['CodeChef'].map((item:any, idx:any) => (
+                  <tr key={'CodeChef' + String(idx)} className='transition-colors hover:bg-white/5'>
+                    <td className='px-6 py-4'>
+                      <div className='flex items-center gap-3'>
+                        <img className='h-10 w-10 rounded-lg object-contain' src={CodeChefSVG} alt='CodeChef logo' />
+                        <span className='font-medium text-white'>CodeChef</span>
+                      </div>
+                    </td>
+                    <td className='px-6 py-4'>
+                      <div className='flex items-center gap-2'>
+                        <span>{item.contest_name}</span>
+                        <a className='rounded-full p-1 text-slate-400 transition hover:bg-white/10 hover:text-cyan-300' target='_blank' rel='noreferrer' href={createLink('CodeChef', item.contest_code)}>
+                          <img className='h-4 w-4' src={NewTabSVG} alt='Open contest' />
+                        </a>
+                      </div>
+                    </td>
+                    <td className='px-6 py-4'>{new Date(Date.parse(item.contest_start_date_iso)).toLocaleString()}</td>
+                    <td className='px-6 py-4'>{minutesToHours(item.contest_duration)}</td>
+                    <td className='px-6 py-4'>{timeUntilStart(Date.parse(item.contest_start_date_iso), item.contest_duration * 60 * 1000)}</td>
                   </tr>
                 ))}
-                {(filterPlatform === 'Codeforces' || filterPlatform === 'All') && contests['Codeforces'].map((item:any,idx:any)=>(
-                  <tr key={"Codeforces" + String(idx)}>
-                    <td className='flex items-center'><img className='w-10 h-10' src={CodeforcesSVG}/>Codeforces</td>
-                    <td>{item.name}<a target='_blank' href={createLink('Codeforces',item.id,Date.parse(new Date(item.startTimeSeconds * 1000).toISOString()),item.durationSeconds * 1000)}><img className='inline' src={NewTabSVG} /></a></td>
-                    <td>{new Date(item.startTimeSeconds * 1000).toLocaleString()}</td>
-                    <td>{minutesToHours(item.durationSeconds / 60)}</td>
-                    <td>{timeUntilStart((Date.parse(new Date(item.startTimeSeconds * 1000).toISOString())),item.durationSeconds * 1000)}</td>
+                {(filterPlatform === 'Codeforces' || filterPlatform === 'All') && contests['Codeforces'].map((item:any, idx:any) => (
+                  <tr key={'Codeforces' + String(idx)} className='transition-colors hover:bg-white/5'>
+                    <td className='px-6 py-4'>
+                      <div className='flex items-center gap-3'>
+                        <img className='h-10 w-10 rounded-lg object-contain' src={CodeforcesSVG} alt='Codeforces logo' />
+                        <span className='font-medium text-white'>Codeforces</span>
+                      </div>
+                    </td>
+                    <td className='px-6 py-4'>
+                      <div className='flex items-center gap-2'>
+                        <span>{item.name}</span>
+                        <a className='rounded-full p-1 text-slate-400 transition hover:bg-white/10 hover:text-cyan-300' target='_blank' rel='noreferrer' href={createLink('Codeforces', item.id, Date.parse(new Date(item.startTimeSeconds * 1000).toISOString()), item.durationSeconds * 1000)}>
+                          <img className='h-4 w-4' src={NewTabSVG} alt='Open contest' />
+                        </a>
+                      </div>
+                    </td>
+                    <td className='px-6 py-4'>{new Date(item.startTimeSeconds * 1000).toLocaleString()}</td>
+                    <td className='px-6 py-4'>{minutesToHours(item.durationSeconds / 60)}</td>
+                    <td className='px-6 py-4'>{timeUntilStart(Date.parse(new Date(item.startTimeSeconds * 1000).toISOString()), item.durationSeconds * 1000)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          )}
-        </div>
-        {toast.msg.length > 0 && <Toast msg={toast.msg} ok={toast.ok} />}
-        <Github repo={"A"} />
-      </div>
-    )
+          </div>
+        )}
+      </section>
+    </div>
+    {toast.msg.length > 0 && <Toast msg={toast.msg} ok={toast.ok} />}
+    <Github repo={'A'} />
+  </div>
+)
 }
