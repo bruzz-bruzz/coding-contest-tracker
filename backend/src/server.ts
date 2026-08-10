@@ -3,10 +3,11 @@ import cron from 'node-cron'
 import {Redis} from '@upstash/redis'
 import rateLimit from 'express-rate-limit'
 import dotenv from 'dotenv'
-import leetcodeRoute,{ getLeetCodeData } from './routes/Leetcode'
-import atcoderRoute,{ getAtcoderData } from './routes/Atcoder'
-import codechefRoute,{ getCodechefData } from './routes/Codechef'
-import codeforcesRoute,{ getCodeforcesData } from './routes/Codeforces'
+import cors from 'cors'
+import { getLeetCodeData } from './routes/Leetcode'
+import { getAtcoderData } from './routes/Atcoder'
+import { getCodechefData } from './routes/Codechef'
+import { getCodeforcesData } from './routes/Codeforces'
 dotenv.config()
 type returnFormat = {
     data:any,
@@ -18,8 +19,17 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
 })
 const rateLimiter = rateLimit({
-    max:100
+    windowMs: 15 * 60 * 1000, // 15 minutes window
+    limit: 75, // Limit each IP to 100 requests per window
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: 'draft-8', // Returns rate limit info in the 'RateLimit' header
+    legacyHeaders: false, // Disables the older 'X-RateLimit-*' headers
 })
+app.use(rateLimiter)
+app.use(cors({
+    origin:process.env.ORIGIN,
+    credentials:true
+}))
 async function convertToJSON(){
     const [atcoder,leetcode,codechef,codeforces] = [await getAtcoderData(),await getLeetCodeData(),await getCodechefData(),await getCodeforcesData()]
     const contestJSON = {
@@ -47,8 +57,4 @@ app.get('/all',async(req:Request,res:Response<returnFormat>)=>{
         return res.json({data:[],ok:false})
     }
 })
-app.use('/codeforces',codeforcesRoute)
-app.use('/leetcode',leetcodeRoute)
-app.use('/codechef',codechefRoute)
-app.use('/atcoder',atcoderRoute)
 app.listen(3000)

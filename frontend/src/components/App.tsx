@@ -169,6 +169,11 @@ export default function App(){
     const d = Math.floor(s / (3600 * 24))
     return `${d}d ${h}h ${m}m ${second}s`
   }
+  function minutesToHours(time:number){
+    const m = time % 60
+    const h = Math.floor(time / 60)
+    return `${h} hour(s) ${m} minute(s)`
+  }
   function createLink(type:'LeetCode'|"AtCoder"|"CodeChef"|"Codeforces",contestID:string,contestStart?:number,contestEnd?:number){
     const baseURL = urlMap[type]
     if(type === 'LeetCode'){
@@ -216,7 +221,6 @@ export default function App(){
     },1000)
     return () => clearInterval(interval)
   },[])
-  //add LINKS
     return (
       <div>
         <div className='flex justify-center items-center flex-col'>
@@ -240,7 +244,7 @@ export default function App(){
                   <th>Contest Name</th>
                   <th>Starting Time</th>
                   <th>Contest Duration</th>
-                  <th>Time until start (DAY:MINUTE:SECOND)</th>
+                  <th>Time until start</th>
                 </tr>
               </thead>
               <tbody>
@@ -248,8 +252,8 @@ export default function App(){
                   <tr key={'LeetCode' + String(idx)}>
                     <td className='flex items-center'> <img className='w-10 h-10' src={LeetCodeSVG} />LeetCode</td>
                     <td>{item.title}<a target='_blank' href={createLink('LeetCode',item.titleSlug)}><img className='inline' src={NewTabSVG} /></a></td>
-                    <td>{new Date(item.startTime * 1000).toISOString()}</td>
-                    <td>{item.duration / 60} minutes</td>
+                    <td>{new Date(item.startTime * 1000).toLocaleString()}</td>
+                    <td>{minutesToHours(item.duration / 60)}</td>
                     <td>{timeUntilStart((Date.parse(new Date(item.startTime * 1000).toISOString())),item.duration * 1000)}</td>
                   </tr>
                 ))}
@@ -257,8 +261,8 @@ export default function App(){
                   <tr key={'AtCoder' + String(idx)}>
                     <td className='flex items-center'> <img className='w-10 h-10' src={AtCoderSVG} />AtCoder</td>
                     <td>{item.title}<a target='_blank' href={createLink("AtCoder",item.title)}><img className='inline' src={NewTabSVG} /></a></td>
-                    <td>{new Date(item.start_epoch_second * 1000).toISOString()}</td>
-                    <td>{item.duration_second / 60} minutes</td>
+                    <td>{new Date(item.start_epoch_second * 1000).toLocaleString()}</td>
+                    <td>{minutesToHours(item.duration_second / 60)}</td>
                     <td>{timeUntilStart((Date.parse(new Date(item.start_epoch_second * 1000).toISOString())),item.duration_second * 1000)}</td>
                   </tr>
                 ))}
@@ -266,8 +270,8 @@ export default function App(){
                   <tr key={'CodeChef' + String(idx)}>
                     <td className='flex items-center'><img className='w-10 h-10' src={CodeChefSVG}/>CodeChef </td>
                     <td>{item.contest_name}<a target='_blank' href={createLink("CodeChef",item.contest_code)}><img className='inline' src={NewTabSVG} /></a></td>
-                    <td>{item.contest_start_date_iso}</td>
-                    <td>{item.contest_duration} minutes</td>
+                    <td>{new Date(Date.parse(item.contest_start_date_iso)).toLocaleString()}</td>
+                    <td>{minutesToHours(item.contest_duration)}</td>
                     <td>{timeUntilStart(Date.parse(item.contest_start_date_iso),item.contest_duration * 60 * 1000)}</td>
                   </tr>
                 ))}
@@ -275,8 +279,8 @@ export default function App(){
                   <tr key={"Codeforces" + String(idx)}>
                     <td className='flex items-center'><img className='w-10 h-10' src={CodeforcesSVG}/>Codeforces</td>
                     <td>{item.name}<a target='_blank' href={createLink('Codeforces',item.id,Date.parse(new Date(item.startTimeSeconds * 1000).toISOString()),item.durationSeconds * 1000)}><img className='inline' src={NewTabSVG} /></a></td>
-                    <td>{new Date(item.startTimeSeconds * 1000).toISOString()}</td>
-                    <td>{item.durationSeconds / 60} minutes</td>
+                    <td>{new Date(item.startTimeSeconds * 1000).toLocaleString()}</td>
+                    <td>{minutesToHours(item.durationSeconds / 60)}</td>
                     <td>{timeUntilStart((Date.parse(new Date(item.startTimeSeconds * 1000).toISOString())),item.durationSeconds * 1000)}</td>
                   </tr>
                 ))}
