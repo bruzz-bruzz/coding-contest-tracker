@@ -388,7 +388,7 @@ return (
       </section>
     </div>
     {toast.msg.length > 0 && <Toast msg={toast.msg} ok={toast.ok} />}
-    <Github repo={'A'} />
+    <Github repo={'https://github.com/bruzz-bruzz/coding-contest-tracker'} />
   </div>
 )
 }
