@@ -120,7 +120,7 @@ export default function App(){
       <div className="app">
         <div className='flex justify-center items-center flex-col'>
           <h3>Coding Contest Tracker</h3>
-          <h5>Refreshes twice a day at 00:00 and 12:00 Malaysian Time UTC +8</h5>
+          <h5>Refreshes four times a day at 00:00, 06:00, 12:00 and 18:00 Malaysian Time UTC +8</h5>
           <div className='inline flex items-center'>
             <label className='text-sm text-slate-300 mr-2'>Selected platforms:</label>
             <Select
