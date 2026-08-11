@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="title desc">
+  <title id="title">Coding Contest Tracker Icon</title>
+  <desc id="desc">A rounded square icon with a contest clock and code brackets.</desc>
+  <defs>
+    <linearGradient id="bgGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.65)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+  <rect x="8" y="8" width="104" height="104" rx="26" fill="url(#bgGradient)"/>
+  <circle cx="60" cy="60" r="34" fill="rgba(255,255,255,0.16)"/>
+  <circle cx="60" cy="60" r="26" fill="rgba(255,255,255,0.18)"/>
+  <circle cx="60" cy="60" r="18" fill="#ffffff" opacity="0.9"/>
+  <path d="M60 46v8" stroke="#4f46e5" stroke-width="4" stroke-linecap="round"/>
+  <path d="M60 60h10" stroke="#4f46e5" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="60" cy="60" r="2.8" fill="#4f46e5"/>
+  <path d="M36 50.5l-7.5 6.5 7.5 6.5" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M84 50.5l7.5 6.5-7.5 6.5" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M22 24.5h76" stroke="rgba(255,255,255,0.18)" stroke-width="10" stroke-linecap="round"/>
+  <path d="M22 95.5h76" stroke="rgba(255,255,255,0.18)" stroke-width="10" stroke-linecap="round"/>
+  <rect x="14" y="14" width="92" height="92" rx="20" fill="url(#glow)"/>
+</svg>
