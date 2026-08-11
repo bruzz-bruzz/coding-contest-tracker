@@ -1,10 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import dotenv from 'dotenv'
 import {Redis} from '@upstash/redis'
-import { getLeetCodeData } from './routes/Leetcode'
-import { getAtcoderData } from './routes/Atcoder'
-import { getCodechefData } from './routes/Codechef'
-import { getCodeforcesData } from './routes/Codeforces'
+import { getLeetCodeData } from '../src/routes/Leetcode'
+import { getAtcoderData } from '../src/routes/Atcoder'
+import { getCodechefData } from '../src/routes/Codechef'
+import { getCodeforcesData } from '../src/routes/Codeforces'
 dotenv.config()
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL,
