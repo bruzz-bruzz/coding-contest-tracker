@@ -1,7 +1,7 @@
 import express,{Request,Response} from 'express'
 import cron from 'node-cron'
 import {Redis} from '@upstash/redis'
-import rateLimit from 'express-rate-limit'
+import {rateLimit} from 'express-rate-limit'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import { getLeetCodeData } from './routes/Leetcode'
@@ -19,13 +19,12 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
 })
 const rateLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes window
-    limit: 75, // Limit each IP to 100 requests per window
+    windowMs: 15 * 60 * 1000, 
+    limit: 50,
     message: 'Too many requests from this IP, please try again later.',
-    standardHeaders: 'draft-8', // Returns rate limit info in the 'RateLimit' header
-    legacyHeaders: false, // Disables the older 'X-RateLimit-*' headers
+    legacyHeaders: false, 
 })
-app.use(rateLimiter)
+
 app.use(cors({
     origin:process.env.ORIGIN,
     credentials:true
