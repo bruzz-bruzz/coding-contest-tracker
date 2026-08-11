@@ -3,7 +3,6 @@ import cron from 'node-cron'
 import {Redis} from '@upstash/redis'
 import {rateLimit} from 'express-rate-limit'
 import dotenv from 'dotenv'
-import cors from 'cors'
 import { getLeetCodeData } from './routes/Leetcode'
 import { getAtcoderData } from './routes/Atcoder'
 import { getCodechefData } from './routes/Codechef'
@@ -24,11 +23,6 @@ const rateLimiter = rateLimit({
     message: 'Too many requests from this IP, please try again later.',
     legacyHeaders: false, 
 })
-
-app.use(cors({
-    origin:process.env.ORIGIN,
-    credentials:true
-}))
 async function convertToJSON(){
     const [atcoder,leetcode,codechef,codeforces] = [await getAtcoderData(),await getLeetCodeData(),await getCodechefData(),await getCodeforcesData()]
     const contestJSON = {
