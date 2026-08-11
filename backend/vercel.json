@@ -13,11 +13,11 @@
   ],
   "crons":[
     {
-        "path":"/src/cron1.ts",
+        "path":"/api/cron1.ts",
         "schedule":"0 0 * * *"
     },
     {
-        "path":"/src/cron2.ts",
+        "path":"/api/cron2.ts",
         "schedule":"0 12 * * *"
     }
   ]
