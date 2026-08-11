@@ -33,7 +33,7 @@ async function convertToJSON(){
     return contestJSON
 }
 app.use(rateLimiter)
-app.set('trust proxy', true)
+app.set('trust proxy', 1)
 app.get('/all',async(req:Request,res:Response<returnFormat>)=>{
     try{
         const response = await redis.get('contestData')
