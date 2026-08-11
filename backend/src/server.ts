@@ -1,5 +1,4 @@
 import express,{Request,Response} from 'express'
-import cron from 'node-cron'
 import {Redis} from '@upstash/redis'
 import {rateLimit} from 'express-rate-limit'
 import dotenv from 'dotenv'
@@ -33,10 +32,6 @@ async function convertToJSON(){
     }
     return contestJSON
 }
-cron.schedule('0 */12 * * *',async ()=>{
-    const obj = await convertToJSON()
-    await redis.set('contestData',JSON.stringify(obj))
-})
 app.get('/all',async(req:Request,res:Response<returnFormat>)=>{
     try{
         const response = await redis.get('contestData')
