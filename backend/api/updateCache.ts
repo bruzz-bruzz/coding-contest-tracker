@@ -23,10 +23,13 @@ async function convertToJSON(){
     return contestJSON
 }
 export default async function handler(req:Request, res:Response) {
+const protocol = req.headers["x-forwarded-proto"] || "https";
+  const host = req.headers["x-forwarded-host"] || req.headers.host;
+  const fullUrl = `${protocol}://${host}${req.url}`;
   const isValid = await receiver.verify({
     signature: req.headers["upstash-signature"] as string,
-    body: JSON.stringify(req.body || ""),
-    url: `https://${req.headers.host}${req.url}`,
+    body: req.body,
+    url: fullUrl,
   }).catch(() => false);
 
   if (!isValid) return res.status(401).json({ error: "Unauthorized" });
