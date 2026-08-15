@@ -49,7 +49,7 @@ Refund policies for any paid features will be clearly stated if applicable.
 
 ## 7. Privacy
 ### Privacy Policy
-We respect your privacy. For more information on how we handle your data, please refer to our [Privacy Policy](#).
+We respect your privacy. For more information on how we handle your data, please refer to our [Privacy Policy].
 
 ### Data Handling
 - We collect and use your Discord user ID to provide the service.
