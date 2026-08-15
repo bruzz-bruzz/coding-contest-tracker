@@ -178,6 +178,7 @@ const client = new Client({
 })
 const contestsCommand = new SlashCommandBuilder().setName('contests').setDescription('View upcoming coding contests');
 const aboutCommand = new SlashCommandBuilder().setName('about').setDescription('View information about the bot');
+const helpCommand = new SlashCommandBuilder().setName("help").setDescription("View the bot's commands and how to use them")
 let data: any = null;
 let appEmojis :any = null;
 client.once(Events.ClientReady, async (readyClient) => {
@@ -189,7 +190,8 @@ client.once(Events.ClientReady, async (readyClient) => {
       await rest.put(Routes.applicationGuildCommands(process.env.CLIENTID as string, process.env.GUILD_ID as string), {
         body: [
           contestsCommand.toJSON(),
-          aboutCommand.toJSON()
+          aboutCommand.toJSON(),
+          helpCommand.toJSON()
         ]
       })
     }catch(e){}
@@ -216,11 +218,26 @@ client.on(Events.InteractionCreate, async (interaction) => {
         .addFields([
           {name:"Platforms",value:"AtCoder, LeetCode, CodeChef, Codeforces"},
           {name:"Refresh times",value:"Four times a day at 00:00, 06:00, 12:00 and 18:00. UTC +8 timezone"},
+          {name:"Terms of Service",value:"https://github.com/bruzz-bruzz/coding-contest-tracker/blob/main/TOS.md"},
+          {name:"Privacy Policy",value:"https://github.com/bruzz-bruzz/coding-contest-tracker/blob/main/PRIVACY.md"},
           {name:"Github Repository",value:"https://github.com/bruzz-bruzz/coding-contest-tracker"}
         ])
         .setFooter({text:`Made by bruzz-bruzz \n https://github.com/bruzz-bruzz`,iconURL:"https://avatars.githubusercontent.com/u/216314263?v=4"})
         .setTimestamp()
         await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+    }
+    if(interaction.commandName === 'help'){
+        const embed = new EmbedBuilder()
+        .setTitle("Coding Contest Tracker Help Page")
+        .setDescription("List of commands this bot has and their usages")
+        .addFields([
+            {name:"`/contests`",value:"Get info on upcoming contests"},
+            {name:"`/about`",value:"Get info on this discord bot"},
+            {name:"`/help`",value:"Get info on the bot's commands"}
+        ])
+        .setFooter({text:`Made by bruzz-bruzz \n https://github.com/bruzz-bruzz`,iconURL:"https://avatars.githubusercontent.com/u/216314263?v=4"})
+        .setTimestamp()
+        await interaction.reply({embeds:[embed],flags:MessageFlags.Ephemeral})
     }
 });
 
