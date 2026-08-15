@@ -190,6 +190,8 @@ export default function App(){
           )}
           {toast.msg.length > 0 && <Toast msg={toast.msg} ok={toast.ok} />}
           <Github repo={"https://github.com/bruzz-bruzz/coding-contest-tracker"} />
+          <h3><a href="https://github.com/bruzz-bruzz/coding-contest-tracker/blob/main/PRIVACY.md">Privacy Policy</a></h3>
+          <h3><a href="https://github.com/bruzz-bruzz/coding-contest-tracker/blob/main/TOS.md">Terms of Service</a></h3>
         </div>
       </div>
     )
