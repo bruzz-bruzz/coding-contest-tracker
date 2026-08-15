@@ -55,5 +55,5 @@ Welcome to the Coding Contest Tracker, a Discord bot designed to provide users w
 
 ## 11. Contact Us
 If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us at:
-- **Email:** [support@codingcontestbot.com]
-- **Discord:** [Bot Support Server]
+- **Email:** [rahh28308@gmail.com]
+- **Discord:** [Coding Contest Tracker Support Server]
