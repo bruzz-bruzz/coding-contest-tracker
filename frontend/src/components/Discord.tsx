@@ -1,5 +1,6 @@
 const inviteUrl = 'https://discord.com/oauth2/authorize?client_id=1375687808571805696&permissions=19456&integration_type=0&scope=bot+applications.commands'
 import demoIMG from '../assets/demo.png'
+import Github from './Github'
 const features = [
   {
     title: 'Contest alerts',
@@ -147,6 +148,7 @@ export default function Discord() {
           <span>Discord • Codeforces • CodeChef • AtCoder • LeetCode</span>
         </footer>
       </div>
+      <Github repo={"https://github.com/bruzz-bruzz/coding-contest-tracker"}/>
     </div>
   )
 }
