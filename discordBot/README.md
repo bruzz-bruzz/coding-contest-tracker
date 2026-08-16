@@ -9,5 +9,5 @@ A Discord bot that retrieves information about upcoming coding contests and show
 - `/about` - Get info on the bot itself.
 
 ## Add to your server
-![Add to your server](https://discord.com/oauth2/authorize?client_id=1375687808571805696&permissions=19456&integration_type=0&scope=bot+applications.commands)
+(https://discord.com/oauth2/authorize?client_id=1375687808571805696&permissions=19456&integration_type=0&scope=bot+applications.commands)
 Made by `bruzz-bruzz`

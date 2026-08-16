@@ -36,7 +36,7 @@ A full-stack app that aggregates upcoming programming contests from Codeforces, 
 
 
 ## Add discord bot to your server
-![Add to your server](https://discord.com/oauth2/authorize?client_id=1375687808571805696&permissions=19456&integration_type=0&scope=bot+applications.commands)
+(https://discord.com/oauth2/authorize?client_id=1375687808571805696&permissions=19456&integration_type=0&scope=bot+applications.commands)
 
 ## Repository Structure
 
