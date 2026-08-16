@@ -10,7 +10,7 @@ export default function Github({repo}:Data){
             <h3><a href={`${repo}`} className='underline' target="_blank">GitHub Repository</a></h3>
             <h3><a className='underline' href="https://github.com/bruzz-bruzz/coding-contest-tracker/blob/main/PRIVACY.md">Privacy Policy</a></h3>
             <h3><a className='underline' href="https://github.com/bruzz-bruzz/coding-contest-tracker/blob/main/TOS.md">Terms of Service</a></h3>
-            <h3></h3>
+            <h3><a className='underline' target='_blank' href="https://coding-contest-tracker-one.vercel.app/discordBot">Discord Bot</a></h3>
         </div>
     )
 }
