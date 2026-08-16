@@ -131,19 +131,19 @@ function parseData(data, includes) {
     const leetCodeArr = [];
     for (const contest of (_e = contestData.CodeChef) !== null && _e !== void 0 ? _e : []) {
         const logo = '👨‍🍳';
-        codeChefArr.push(`${logo}Name: ${contest.contest_name}\nStart: ${new Date(Date.parse(contest.contest_start_date_iso)).toLocaleString()} <t:${Date.parse(contest.contest_start_date_iso) / 1000}:R>\nDuration: ${minutesToHours(contest.contest_duration)}\nLink: ${createLink('CodeChef', contest.contest_code)}`);
+        codeChefArr.push(`${logo}Name: ${contest.contest_name}\nStart: ${new Date(Date.parse(contest.contest_start_date_iso)).toLocaleString()} <t:${Date.parse(contest.contest_start_date_iso) / 1000}:R>\nEnd: ${new Date(Date.parse(contest.contest_start_data_iso) + contest.contest_duration).toLocaleDateString()} <t:${((Date.parse(contest.contest_start_date_iso) / 1000) + contest.contest_duration)}:R>\nDuration: ${minutesToHours(contest.contest_duration)}\nLink: ${createLink('CodeChef', contest.contest_code)}`);
     }
     for (const contest of (_f = contestData.Codeforces) !== null && _f !== void 0 ? _f : []) {
         const logo = '📊';
-        codeForcesArr.push(`${logo}Name: ${contest.name}\nStart: ${new Date(contest.startTimeSeconds * 1000).toLocaleString()} <t:${contest.startTimeSeconds}:R>\nDuration: ${minutesToHours(contest.durationSeconds / 60)}\nLink: ${createLink('Codeforces', contest.id)}`);
+        codeForcesArr.push(`${logo}Name: ${contest.name}\nStart: ${new Date(contest.startTimeSeconds * 1000).toLocaleString()} <t:${contest.startTimeSeconds}:R>\nEnd:${new Date((contest.startTimeSeconds * 1000) + contest.durationSeconds).toLocaleString()}<t:${(contest.startTimeSeconds * 1000) + contest.durationSeconds}:R> \nDuration: ${minutesToHours(contest.durationSeconds / 60)}\nLink: ${createLink('Codeforces', contest.id)}`);
     }
     for (const contest of (_g = contestData.AtCoder) !== null && _g !== void 0 ? _g : []) {
         const logo = '🎯';
-        atCoderArr.push(`${logo}Name: ${contest.title}\nStart: ${new Date(contest.start_epoch_second * 1000).toLocaleString()} <t:${contest.start_epoch_second}:R>\nDuration: ${minutesToHours(contest.duration_second / 60)}\nLink: ${createLink('AtCoder', contest.title)}`);
+        atCoderArr.push(`${logo}Name: ${contest.title}\nStart: ${new Date(contest.start_epoch_second * 1000).toLocaleString()} <t:${contest.start_epoch_second}:R>\nEnd: ${new Date((contest.start_epoch_second * 1000) + (contest.duration_second * 1000)).toLocaleString()} <t:${(contest.start_epoch_second + contest.duration_second) * 1000}:R>\nDuration: ${minutesToHours(contest.duration_second / 60)}\nLink: ${createLink('AtCoder', contest.title)}`);
     }
     for (const contest of (_k = (_j = (_h = contestData.LeetCode) === null || _h === void 0 ? void 0 : _h.data) === null || _j === void 0 ? void 0 : _j.topTwoContests) !== null && _k !== void 0 ? _k : []) {
         const logo = '💻';
-        leetCodeArr.push(`${logo}Name: ${contest.title}\nStart: ${new Date(contest.startTime * 1000).toLocaleString()} <t:${contest.startTime}:R>\nDuration: ${minutesToHours(contest.duration / 60)}\nLink: ${createLink('LeetCode', contest.titleSlug)}`);
+        leetCodeArr.push(`${logo}Name: ${contest.title}\nStart: ${new Date(contest.startTime * 1000).toLocaleString()} <t:${contest.startTime}:R>\nDuration: ${minutesToHours(contest.duration / 60)}\nEnd: ${new Date((contest.startTime + contest.duration) * 1000).toLocaleString()} <t:${(contest.startTime + contest.duration) * 1000}:R>\nLink: ${createLink('LeetCode', contest.titleSlug)}`);
     }
     let fields = [];
     if (includes === 'All' || includes === 'CodeChef') {

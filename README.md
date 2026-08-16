@@ -96,7 +96,7 @@ A full-stack app that aggregates upcoming programming contests from Codeforces, 
 
 ## Notes
 
-- The app currently refreshes contest data twice per day in the backend.
+- The app currently refreshes contest data four times per day in the backend.
 - The frontend uses the backend URL from `import.meta.env.VITE_BACKEND_URL`.
 
 ## Credits
