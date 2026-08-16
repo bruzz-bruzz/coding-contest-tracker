@@ -1,5 +1,5 @@
 const inviteUrl = 'https://discord.com/oauth2/authorize?client_id=1375687808571805696&permissions=19456&integration_type=0&scope=bot+applications.commands'
-
+import demoIMG from '../assets/demo.png'
 const features = [
   {
     title: 'Contest alerts',
@@ -86,52 +86,15 @@ export default function Discord() {
                 <span className="h-3 w-3 rounded-full bg-red-400" />
                 <span className="h-3 w-3 rounded-full bg-yellow-400" />
                 <span className="h-3 w-3 rounded-full bg-emerald-400" />
+                <span>Demo</span>
               </div>
-
-              <div className="grid flex-1 grid-cols-[170px_1fr]">
-                <div className="border-r border-slate-800 bg-slate-900/80 p-4">
-                  <div className="mb-3 rounded-lg bg-indigo-500/10 px-3 py-2 text-sm font-semibold text-indigo-100">
-                    # contests
-                  </div>
-                  <div className="mb-3 rounded-lg px-3 py-2 text-sm text-slate-300"># announcements</div>
-                  <div className="rounded-lg px-3 py-2 text-sm text-slate-300"># help</div>
-                </div>
 
                 <div className="flex items-center justify-center p-5">
                   <div className="w-full rounded-2xl border border-indigo-500/20 bg-indigo-500/5 p-4">
-                    <div className="mb-4 flex items-center gap-3">
-                      <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-400 to-teal-300 text-sm font-black text-slate-950">
-                        CC
-                      </div>
-                      <div>
-                        <h3 className="text-base font-bold text-white">Coding Contest Tracker</h3>
-                        <span className="mt-1 inline-flex rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-300">
-                          Live
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-3">
-                        <div>
-                          <div className="font-semibold text-slate-100">Google Code Jam</div>
-                          <div className="mt-1 text-xs text-sky-200/80">Starts in 2d 4h</div>
-                        </div>
-                        <span className="text-xs text-slate-300">Codeforces</span>
-                      </div>
-
-                      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-3">
-                        <div>
-                          <div className="font-semibold text-slate-100">AtCoder Beginner Contest</div>
-                          <div className="mt-1 text-xs text-sky-200/80">Starts in 7h 32m</div>
-                        </div>
-                        <span className="text-xs text-slate-300">AtCoder</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                <img className='rounded-lg scale-125' src={demoIMG}/>
             </div>
+          </div>
+          </div>
           </div>
         </main>
 
