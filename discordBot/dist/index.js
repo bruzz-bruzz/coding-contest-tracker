@@ -51,10 +51,8 @@ const client = new discord_js_1.Client({
     ]
 });
 client.once(discord_js_1.Events.ClientReady, (ready) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     loadCommands();
     client.contestData = yield getData();
-    client.applicationEmojis = (yield ((_a = client.application) === null || _a === void 0 ? void 0 : _a.emojis.fetch()));
     node_cron_1.default.schedule('0 0,6,12,18 * * *', () => __awaiter(void 0, void 0, void 0, function* () {
         client.contestData = yield getData();
     }));

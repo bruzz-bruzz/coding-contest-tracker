@@ -31,11 +31,10 @@ const rest = new discord_js_1.REST().setToken(process.env.DISCORD_TOKEN);
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
         // The put method is used to fully refresh all commands in the guild with the current set
         const data = yield rest.put(discord_js_1.Routes.applicationGuildCommands(process.env.CLIENTID, process.env.GUILD_ID), { body: commands });
-        const data2 = yield rest.put(discord_js_1.Routes.applicationCommands(process.env.CLIENTID), { body: [] });
+        const data2 = yield rest.put(discord_js_1.Routes.applicationCommands(process.env.CLIENTID), { body: commands });
         console.log(`Successfully reloaded application (/) commands.`);
     }
     catch (error) {
-        // And of course, make sure you catch and log any errors!
         console.error(error);
     }
 }))();

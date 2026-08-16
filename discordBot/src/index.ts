@@ -8,7 +8,6 @@ import {parseData} from './buildContestEmbed'
 declare module 'discord.js' {
   export interface Client {
     contestData: {};
-    applicationEmojis: Collection<Snowflake,ApplicationEmoji>;
     commands: Collection<string,any>;
   }
 }
@@ -43,7 +42,6 @@ const client = new Client({
 client.once(Events.ClientReady,async(ready)=>{
     loadCommands()
     client.contestData = await getData()
-    client.applicationEmojis = await client.application?.emojis.fetch() as Collection<Snowflake,ApplicationEmoji>
     cron.schedule('0 0,6,12,18 * * *', async () => {
         client.contestData = await getData()
     });
