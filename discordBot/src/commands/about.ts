@@ -5,6 +5,7 @@ const data =  new EmbedBuilder()
         .addFields([
           {name:"Platforms",value:"AtCoder, LeetCode, CodeChef, Codeforces"},
           {name:"Refresh times",value:"Four times a day at 00:00, 06:00, 12:00 and 18:00. UTC +8 timezone"},
+          {name:"Website",value:"https://coding-contest-tracker-one.vercel.app/"},
           {name:"Terms of Service",value:"https://github.com/bruzz-bruzz/coding-contest-tracker/blob/main/TOS.md"},
           {name:"Privacy Policy",value:"https://github.com/bruzz-bruzz/coding-contest-tracker/blob/main/PRIVACY.md"},
           {name:"Github Repository",value:"https://github.com/bruzz-bruzz/coding-contest-tracker"}
