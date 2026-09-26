@@ -1,146 +1,195 @@
-import { useState, useEffect } from 'react'
-import { ExternalLink, Trophy, Code, Laptop, Terminal, Github } from 'lucide-react'
+import Github from './Github'
+import Toast from './Toast'
+import Select from './Select'
+import NewTabSVG from './assets/NewTab.svg'
+import LogoSVG from './assets/Logo.svg'
 
-type Platform = 'All' | 'Codeforces' | 'CodeChef' | 'AtCoder' | 'LeetCode'
-
-interface Contest {
-  platform: Platform
-  title: string
-  startTime: number
-  duration: number // in minutes
-  link: string
-}
-
-const placeholderContests: Contest[] = [
-  { platform: 'LeetCode', title: 'Weekly Contest 417', startTime: Date.now() + 86400000, duration: 90, link: 'https://leetcode.com/contest' },
-  { platform: 'Codeforces', title: 'Codeforces Round 974 (Div. 3)', startTime: Date.now() + 3600000 * 5, duration: 135, link: 'https://codeforces.com/contest' },
-  { platform: 'AtCoder', title: 'AtCoder Beginner Contest 373', startTime: Date.now() + 7200000, duration: 100, link: 'https://atcoder.jp/contests' },
-  { platform: 'CodeChef', title: 'Starters 153 (Div. 4)', startTime: Date.now() + 172800000, duration: 120, link: 'https://www.codechef.com' },
-];
-
-function formatTimeUntil(startTime: number) {
-  const diff = startTime - Date.now();
-  if (diff <= 0) return 'Started.';
-  const s = Math.floor(diff / 1000);
-  const d = Math.floor(s / (3600 * 24));
-  const h = Math.floor(s / 3600) % 24;
-  const m = Math.floor(s / 60) % 60;
-  const sec = s % 60;
-  return `${d}d ${h}h ${m}m ${sec}s`;
-}
-
-function formatDuration(minutes: number) {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return `${h} hour(s) ${m} minute(s)`;
-}
-
-const PlatformIcon = ({ platform }: { platform: Platform }) => {
-  switch (platform) {
-    case 'Codeforces': return <Terminal size={18} className="text-blue-400" />;
-    case 'CodeChef': return <Code size={18} className="text-orange-400" />;
-    case 'AtCoder': return <Laptop size={18} className="text-red-400" />;
-    case 'LeetCode': return <Trophy size={18} className="text-yellow-400" />;
-    default: return null;
+import CodeChefSVG from './assets/CodeChef.svg'
+import AtCoderSVG from './assets/AtCoder.svg'
+import LeetCodeSVG from './assets/LeetCode.svg'
+import CodeforcesSVG from './assets/Codeforces.svg'
+import {useState,useEffect} from 'react'
+import axios from 'axios'
+export default function App(){
+  type platforms = 'All'|'Codeforces'|'CodeChef'|'AtCoder'|'LeetCode'
+  const urlMap = {
+    'LeetCode':"https://leetcode.com/contest",
+    "AtCoder":"https://atcoder.jp/contests",
+    "CodeChef":"https://www.codechef.com",
+    "Codeforces":"https://codeforces.com/contest"
   }
-}
-
-
-function App() {
-  const [filter, setFilter] = useState<Platform>('All');
-  const [currTime, setCurrTime] = useState(Date.now());
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrTime(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const contests = filter === 'All' ? placeholderContests : placeholderContests.filter(c => c.platform === filter);
-
+  const [currTime,setCurrTime] = useState(Date.now())
+  const [filterPlatform,setFilterPlatform] = useState<platforms>("All")
+  const [contests,setContests] = useState<any | null>(null)
+  const [toast,setToast] = useState({msg:'',ok:false})
+  const [loading,setLoading] = useState<boolean>(true)
+  const [error,setError] = useState<string | null>(null)
+  function clearToast(){
+    setTimeout(()=>{
+      setToast({msg:"",ok:false})
+    },3000)
+  }
+  function timeUntilStart(contestStart:number,contestEnd:number){
+    if(currTime > (contestStart + contestEnd)){
+      return "Ended."
+    }
+    const s = Math.floor((contestStart - currTime) / 1000)
+    if(s < 0){
+      return "Started."
+    }
+    const second = s % 60
+    const m = Math.floor(s / 60) % 60
+    const h = Math.floor(s / 3600) % 24
+    const d = Math.floor(s / (3600 * 24))
+    return `${d}d ${h}h ${m}m ${second}s`
+  }
+  function minutesToHours(time:number){
+    const m = time % 60
+    const h = Math.floor(time / 60)
+    return `${h} hour(s) ${m} minute(s)`
+  }
+  function createLink(type:'LeetCode'|"AtCoder"|"CodeChef"|"Codeforces",contestID:string,contestStart?:number,contestEnd?:number){
+    const baseURL = urlMap[type]
+    if(type === 'LeetCode'){
+      return `${baseURL}/${contestID}`
+    }else if(type === 'AtCoder'){
+      let numberID = contestID.split(' ')
+      if(numberID[numberID.length - 1].length !== 3){
+        numberID[numberID.length - 1] = numberID[numberID.length - 1].slice(0,3)
+      }
+      const matchType = contestID.match("Heuristic") || contestID.match("Beginner") || contestID.match("Regular") || contestID.match("Grand")
+      if(matchType === null){
+        return baseURL
+      } else if(matchType[0] === 'Heuristic'){
+        return `${baseURL}/ahc${numberID[numberID.length - 1]}`
+      } else if(matchType[0] === 'Beginner'){
+        return `${baseURL}/abc${numberID[numberID.length - 1]}`
+      } else if(matchType[0] === 'Regular'){
+        return `${baseURL}/arc${numberID[numberID.length - 1]}`
+      } else if(matchType[0] === "Grand"){
+        return `${baseURL}/agc${numberID[numberID.length - 1]}`
+      }
+    }
+    else if(type === 'CodeChef'){
+      return `${baseURL}/${contestID}`
+    } else if(type === 'Codeforces'){
+      const hasStartedOrEnded = timeUntilStart(contestStart as number,contestEnd as number)
+      if(hasStartedOrEnded !== 'Started.' && hasStartedOrEnded !== 'Ended.'){
+        return `${baseURL}s`
+      }
+      return `${baseURL}/${contestID}`
+    }
+  }
+  async function getContestData(){
+    setLoading(true)
+    setError(null)
+    try{
+      const res = await axios.get("http://localhost:3000/all")
+      let payload: any = res.data
+      if (typeof payload === 'string') {
+        try {
+          payload = JSON.parse(payload)
+        } catch (err) {
+        }
+      }
+      if (payload && payload.data) {
+        payload = payload.data
+      }
+      setContests(payload)
+    }catch(e:any){
+      const msg = e?.message || 'An error occured'
+      setToast({msg,ok:false})
+      setError(msg)
+    } finally {
+      setLoading(false)
+      clearToast()
+    }
+  }
+  useEffect(()=>{
+    const interval = setInterval(()=>{
+      setCurrTime(Date.now())
+    },1000)
+    return () => clearInterval(interval)
+  },[])
+  useEffect(()=>{
+    getContestData()
+  },[])
   return (
-    <div className="bg-[#0f172a] text-[#e6eef8] min-h-[500px] w-[750px] overflow-hidden">
-      <div className="p-8 bg-gradient-to-b from-[#0f172a] via-[#071032] to-[#021026] min-h-full">
-        <div className="flex justify-between items-end mb-8">
-          <div>
-            <h3 className="text-3xl font-bold tracking-tight mb-1">Contests</h3>
-            <h5 className="text-[#9fb0d6] font-medium">Check out upcoming contests</h5>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-[#9fb0d6]">Filter:</span>
-            <select 
-              className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value as Platform)}
-            >
-              <option value="All" className="bg-[#1e293b]">All Platforms</option>
-              <option value="Codeforces" className="bg-[#1e293b]">Codeforces</option>
-              <option value="CodeChef" className="bg-[#1e293b]">CodeChef</option>
-              <option value="AtCoder" className="bg-[#1e293b]">AtCoder</option>
-              <option value="LeetCode" className="bg-[#1e293b]">LeetCode</option>
-            </select>
-          </div>
+    <div className="app">
+      <div className='flex justify-center items-center flex-col'>
+        <img src={LogoSVG} alt="Logo" className="w-16 h-16 mb-2" />
+        <h3>Coding Contest Tracker</h3>
+        <h5>Refreshes four times a day at 00:00, 06:00, 12:00 and 18:00 Malaysian Time UTC +8</h5>
+        <div className='inline flex items-center'>
+          <label className='text-sm text-slate-300 mr-2'>Selected platforms:</label>
+          <Select
+            className="ml-2"
+            options={["All", "Codeforces", "CodeChef", "AtCoder", "LeetCode"]}
+            value={filterPlatform}
+            onChange={(v) => setFilterPlatform(v as platforms)}
+          />
         </div>
-
-        <div className="overflow-hidden rounded-xl border border-white/5 bg-white/5 backdrop-blur-md shadow-2xl">
-          <table className="w-full text-left border-collapse">
+        {loading && (
+          <div className="loading">
+            <div className="spinner" />
+            <div className="loading-text">Loading contests…</div>
+          </div>
+        )}
+        {contests !== null && (
+          <table>
             <thead>
-              <tr className="bg-gradient-to-r from-white/5 to-white/[0.01]">
-                <th className="px-5 py-4 text-[#cfe6ff] font-semibold text-sm">Platform</th>
-                <th className="px-5 py-4 text-[#cfe6ff] font-semibold text-sm">Contest</th>
-                <th className="px-5 py-4 text-[#cfe6ff] font-semibold text-sm">Starting Time</th>
-                <th className="px-5 py-4 text-[#cfe6ff] font-semibold text-sm">Duration</th>
-                <th className="px-5 py-4 text-[#cfe6ff] font-semibold text-sm">Time until start</th>
+              <tr>
+                <th>Platform</th>
+                <th>Contest Name</th>
+                <th>Starting Time</th>
+                <th>Contest Duration</th>
+                <th>Time until start</th>
               </tr>
             </thead>
-            <tbody className="text-sm">
-              {contests.map((c, i) => (
-                <tr key={i} className="border-t border-white/[0.02] hover:bg-white/[0.02] transition-colors group">
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-1.5 rounded-lg bg-white/5 group-hover:bg-white/10 transition-colors">
-                        <PlatformIcon platform={c.platform} />
-                      </div>
-                      <span className="font-medium">{c.platform}</span>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3 font-medium">
-                    <div className="flex items-center gap-1.5">
-                      {c.title}
-                      <a href={c.link} target="_blank" rel="noreferrer" className="text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <ExternalLink size={14} />
-                      </a>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3 text-[#9fb0d6] font-medium">
-                    {new Date(c.startTime).toLocaleString()}
-                  </td>
-                  <td className="px-5 py-3 text-[#9fb0d6] font-medium">
-                    {formatDuration(c.duration)}
-                  </td>
-                  <td className="px-5 py-3 font-mono text-[#7dd3fc]">
-                    {formatTimeUntil(c.startTime)}
-                  </td>
+            <tbody>
+              {(filterPlatform === 'LeetCode' || filterPlatform === 'All') && contests['LeetCode'] && contests['LeetCode']['data'] && contests['LeetCode']['data']['topTwoContests'] && contests['LeetCode']['data']['topTwoContests'].map((item:any,idx:any)=>(
+                <tr key={'LeetCode' + String(idx)}>
+                  <td className='flex items-center'> <img className='w-10 h-10' src={LeetCodeSVG} />LeetCode</td>
+                  <td>{item.title}<a target='_blank' href={createLink('LeetCode',item.titleSlug)}><img className='inline' src={NewTabSVG} /></a></td>
+                  <td>{new Date(item.startTime * 1000).toLocaleString()}</td>
+                  <td>{minutesToHours(item.duration / 60)}</td>
+                  <td>{timeUntilStart((Date.parse(new Date(item.startTime * 1000).toISOString())),item.duration * 1000)}</td>
+                </tr>
+              ))}
+              {(filterPlatform === 'AtCoder' || filterPlatform === 'All') && contests['AtCoder'] && contests['AtCoder'].map((item:any,idx:any)=>(
+                <tr key={'AtCoder' + String(idx)}>
+                  <td className='flex items-center'> <img className='w-10 h-10' src={AtCoderSVG} />AtCoder</td>
+                  <td>{item.title}<a target='_blank' href={createLink("AtCoder",item.title)}><img className='inline' src={NewTabSVG} /></a></td>
+                  <td>{new Date(item.start_epoch_second * 1000).toLocaleString()}</td>
+                  <td>{minutesToHours(item.duration_second / 60)}</td>
+                  <td>{timeUntilStart((Date.parse(new Date(item.start_epoch_second * 1000).toISOString())),item.duration_second * 1000)}</td>
+                </tr>
+              ))}
+              {(filterPlatform === 'CodeChef' || filterPlatform === 'All') && contests['CodeChef'] && contests['CodeChef'].map((item:any,idx:any)=>(
+                <tr key={'CodeChef' + String(idx)}>
+                  <td className='flex items-center'><img className='w-10 h-10' src={CodeChefSVG}/>CodeChef </td>
+                  <td>{item.contest_name}<a target='_blank' href={createLink("CodeChef",item.contest_code)}><img className='inline' src={NewTabSVG} /></a></td>
+                  <td>{new Date(Date.parse(item.contest_start_date_iso)).toLocaleString()}</td>
+                  <td>{minutesToHours(item.contest_duration)}</td>
+                  <td>{timeUntilStart(Date.parse(item.contest_start_date_iso),item.contest_duration * 60 * 1000)}</td>
+                </tr>
+              ))}
+              {(filterPlatform === 'Codeforces' || filterPlatform === 'All') && contests['Codeforces'] && contests['Codeforces'].map((item:any,idx:any)=>(
+                <tr key={"Codeforces" + String(idx)}>
+                  <td className='flex items-center'><img className='w-10 h-10' src={CodeforcesSVG}/>Codeforces</td>
+                  <td>{item.name}<a target='_blank' href={createLink('Codeforces',item.id,Date.parse(new Date(item.startTimeSeconds * 1000).toISOString()),item.durationSeconds * 1000)}><img className='inline' src={NewTabSVG} /></a></td>
+                  <td>{new Date(item.startTimeSeconds * 1000).toLocaleString()}</td>
+                  <td>{minutesToHours(item.durationSeconds / 60)}</td>
+                  <td>{timeUntilStart((Date.parse(new Date(item.startTimeSeconds * 1000).toISOString())),item.durationSeconds * 1000)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-
-        <div className="mt-8 flex justify-center opacity-50 hover:opacity-100 transition-opacity">
-          <a 
-            href="https://github.com/bruzz-bruzz/coding-contest-tracker" 
-            target="_blank" 
-            rel="noreferrer"
-            className="flex items-center gap-2 text-sm font-medium hover:text-blue-400 transition-colors"
-          >
-            <Github size={16} />
-            bruzz-bruzz/coding-contest-tracker
-          </a>
-        </div>
+        )}
+        {toast.msg.length > 0 && <Toast msg={toast.msg} ok={toast.ok} />}
+        <Github repo={"https://github.com/bruzz-bruzz/coding-contest-tracker"} />
       </div>
     </div>
   )
 }
 
-
-export default App
