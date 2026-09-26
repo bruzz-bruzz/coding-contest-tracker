@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Coding Contest Tracker",
+  "version": "1.0.0",
+  "description": "Track upcoming coding contests.",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": ["storage"]
+}
